@@ -20,7 +20,18 @@ int _tmain(int argc, _TCHAR* argv[])
 //	testPartition();		//2.4
 //	testplusAB();			//2.5
 //	testisPalindrome();		//2.7
-	testFindLoopEntry();	//test fast and slow pointer to find Loop Entry
+//	testFindLoopEntry();	//test fast and slow pointer to find Loop Entry
+//	testsetOfStacks();		//3.3
+//	testtwoStacksSort();	//3.6
+//	testasylum();			//3.7
+//	testisBalance();		//4.1
+//	testbuildMinimalBST();	//4.3
+//	testcheckpath();		//4.2
+//	testgetTreeLevel();		//4.4
+//	testcheckBST();			//4.5
+//	testfindSucc();			//4.6
+//	testgetLCA();			//4.7
+	testFindPath();			//4.8
 	system("PAUSE");
 	return 0;
 }

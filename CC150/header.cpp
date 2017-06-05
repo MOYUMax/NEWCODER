@@ -588,3 +588,753 @@ void testFindLoopEntry()
 	if (p != nullptr)
 		cout << "The p->val :" << p->val << endl;
 }
+
+vector<vector<int> > setOfStacks(vector<vector<int> > ope, int size) 
+{
+	// write code here
+
+	vector<vector<int>> ret;
+	stack<int> mystack;
+	for (auto vv_elem : ope){
+		cout << "ope*[0]: " << vv_elem[0] << "\t ope*[1]: " << vv_elem[1] << endl;
+		if (vv_elem[0] == 1)
+			mystack.push(vv_elem[1]);
+		else
+			mystack.pop();
+	}
+	int length = mystack.size();
+	int left = length % size;
+	int nsize = length - left;
+	vector<int> temp;
+	vector<int>::iterator head = temp.begin();
+	for (int i = 0; i < left; ++i)
+	{
+		int top = mystack.top();
+		head  = temp.insert(head, top);
+		mystack.pop();
+	}
+	auto it = ret.begin();
+	if (!temp.empty())
+		it = ret.insert(it, temp);
+	if (nsize > 0){
+		int cir = nsize / size;
+		for (int i = 0; i < cir; ++i){
+			temp.clear();
+			head = temp.begin();
+			for (int j = 0; j < size && !mystack.empty(); ++j){
+				int top = mystack.top();
+				head = temp.insert(head, top);
+				mystack.pop();				
+			}
+			it = ret.insert(it, temp);
+		}
+	}
+	return ret;
+}
+void testsetOfStacks()
+{
+	vector<vector<int>> vvint = {
+		{ 1, 1 },
+		{ 2, 1 },
+		{ 1, 2 },
+		{ 1, 3 },
+		{ 1, 4 },
+		{ 2, 4 },
+		{ 1, 4 },
+		{ 2, 4 },
+		{ 1, 4 },
+		{ 1, 5 },
+		{ 2, 5 },
+		{ 1, 5 },
+		{ 1, 6 },
+		{ 1, 7 },
+		{ 2, 7 },
+		{ 1, 8 },
+		{ 1, 9 },
+		{ 1, 10 },
+		{ 1, 11 },
+		{ 1, 12 },
+		{ 1, 13 },
+		{ 1, 14 },
+		{ 1, 15 },
+		{ 1, 16 },
+	};
+	int size = 4;
+	vector < vector<int> > ret = setOfStacks(vvint, size);
+	cout << "set of stacks:\n";
+	for (auto vv : ret){
+		for (auto vv_elem : vv){
+			cout << vv_elem << " ";
+		}
+		cout << endl;
+	}
+}
+
+/*//a queue build with two stack1 and stack2
+class Solution
+{
+public:
+	void push(int node) {
+		stack1.push(node);
+	}
+
+	int pop() {
+		while (!stack1.empty()){
+			int top = stack1.top();
+			stack2.push(top);
+			stack1.pop();
+		}
+		int ret;
+		if (!stack2.empty()){
+			ret = stack2.top();
+			stack2.pop();
+		}
+		while (!stack2.empty()){
+			stack1.push(stack2.top());
+			stack2.pop();
+		}
+		return ret;
+	}
+
+private:
+	stack<int> stack1;
+	stack<int> stack2;
+};
+*/
+//vector<int> twoStacksSort(vector<int> numbers) 
+//{
+//	// write code here
+//	vector<int> ret = numbers;
+//	//struct cmp{
+//	//	bool operator()(const int & x, const int & y){
+//	//		return x > y;
+//	//	}
+//	//};
+//	//sort(ret.begin(), ret.end(),cmp());
+//	sort(ret.begin(), ret.end(), greater<int>());
+//	return ret;
+//}
+//vector<int> twoStacksSort(vector<int> numbers)
+//{
+//	stack<int> stack1;
+//	stack<int> stack2;
+//	for (auto vi : numbers)
+//		stack1.push(vi);
+//	int length = stack1.size();
+//	int top1, top2;
+//	top2 = stack1.top();
+//	stack2.push(top2);
+//	stack1.pop();
+//	while (!stack1.empty()){
+//		top1 = stack1.top();
+//		while (!stack2.empty() && stack2.top() > top1){
+//			stack1.push(stack2.top());
+//			stack2.pop();
+//		}
+//		stack2.push(top1);
+//		while (!stack1.empty() && top1 != stack1.top()){
+//			stack2.push(stack1.top());
+//			stack1.pop();
+//		}
+//		stack1.pop();
+//	}
+//	vector<int> ret;
+//	while (!stack2.empty()){
+//		ret.push_back(stack2.top());
+//		stack2.pop();
+//	}
+//	return ret;
+//}
+vector<int> twoStacksSort(vector<int> numbers)
+{
+	vector<int> ret;
+	ret.push_back(numbers.back());
+	numbers.pop_back();
+	while (!numbers.empty()){
+		int back = numbers.back();
+		while (!ret.empty() && back > ret.back()){
+			numbers.push_back(ret.back());
+			ret.pop_back();
+		}
+		ret.push_back(back);
+		while (!numbers.empty() && back != numbers.back()){
+			ret.push_back(numbers.back());
+			numbers.pop_back();
+		}
+		numbers.pop_back();
+	}
+	return ret;
+}
+void testtwoStacksSort()
+{
+	vector<int> num = { 1, 5, 4, 6, 8, 7, 9, 1, 6, 4, 4, 5, 8, 420, 130256, 63 };
+	cout << "Befor sort:";
+	for (auto vi : num)
+		cout << vi << " ";
+	num = twoStacksSort(num);
+	cout << "\nAfter sort:";
+	for (auto vi : num)
+		cout << vi << " ";
+}
+vector<int> asylum(vector<vector<int> > ope) {
+	// write code here
+	vector<int> ret;
+	deque<int> myqueue;
+	stack<int> temp;
+	for (auto vv_elem : ope){
+		if (vv_elem[0] == 1)
+			myqueue.push_back(vv_elem[1]);
+		else if (vv_elem[1] == 0 && !myqueue.empty()){
+			ret.push_back(myqueue.front());
+			myqueue.pop_front();
+		}
+		else{
+			while (!myqueue.empty() && myqueue.front()*vv_elem[1] < 0){
+				temp.push(myqueue.front());
+				myqueue.pop_front();
+			}
+			if (!myqueue.empty()){
+				ret.push_back(myqueue.front());
+				myqueue.pop_front();
+			}
+			while (!temp.empty()){
+				myqueue.push_front(temp.top());
+				temp.pop();
+			}
+		}
+	}
+	return ret;
+}
+void testasylum()
+{
+	vector<vector<int>> vvint = {
+		{ 1, 1 },
+		{ 1, -1 },
+		{ 2, 0 },
+		{ 1, 1 },
+		{ 1, -1 },
+		{ 2, -1 },
+		{ 2, -1 },
+		{ 2, 1 },
+		{ 2, 1 },
+	};
+	vector<int> ret = asylum(vvint);
+	for (auto vi : ret)
+		cout << vi << " ";
+	cout << endl;
+}
+
+bool isBalance(TreeNode* root) {
+	// write code here
+	if (root == nullptr)
+		return true;
+	int m = Depth(root->left);
+	int n = Depth(root->right);
+	int l = m > n ? m - n : n - m;
+	if (l > 1)
+		return false;
+	else
+		return true;
+	
+}
+int Depth(TreeNode * root)
+{
+	if (root == nullptr)
+		return 0;
+	else{
+		int m = Depth(root->left);
+		int n = Depth(root->right);
+		return m > n ? m + 1 : n + 1;
+	}
+}
+void CreateTree(TreeNode * & root, int a[],int i, int n)
+{
+	if (i < n){
+		root = new TreeNode(a[i]);
+		CreateTree(root->left, a, 2 * i, n);
+		CreateTree(root->right, a, 2 * i + 1, n);
+	}
+	else
+		root = nullptr;
+}
+void testisBalance()
+{
+	TreeNode * root;
+	int a[10] = {0, 1 , 2, 3, 4, 5, 6, 7, 8, 9 };	
+	CreateTree(root, a, 1, 9);
+	cout << "isBalance:" << isBalance(root) << endl;
+}
+
+void L_Rotate(AVLTrNode * & p)
+{
+	AVLTrNode * R;
+	R = p->right;
+	p->right = R->left;
+	R->left = p;
+	p = R;
+}
+void R_Rotate(AVLTrNode * & p)
+{
+	AVLTrNode * L;
+	L = p->left;
+	p->left = L->right;
+	L->right = p;
+	p = L;
+}
+
+void LeftBalance(AVLTrNode * & T)
+{
+	AVLTrNode * L, * Lr;
+	L = T->left;
+	Lr = L->right;
+	switch (L->bf)
+	{
+	case LH:
+		T->bf = L->bf = EH;
+		R_Rotate(T);
+		break;
+	case RH:
+		switch (Lr->bf)
+		{
+		case LH:
+			T->bf = RH;
+			L->bf = EH;
+			break;
+		case EH:
+			T->bf = L->bf = EH;
+			break;
+		case RH:
+			T->bf = EH;
+			L->bf = LH;
+			break;
+		default:
+			break;
+		}		
+	default:
+		Lr->bf = EH;
+		L_Rotate(T->left);
+		R_Rotate(T);
+		break;
+	}
+}
+void RightBalance(AVLTrNode * & T)
+{
+	AVLTrNode * R, *Rl;
+	R = T->right;
+	Rl = R->left;
+	switch (R->bf)
+	{
+	case RH:
+		T->bf = R->bf = EH;
+		L_Rotate(T);
+		break;
+	case LH:
+		switch (Rl->bf)
+		{
+		case LH:
+			T->bf = EH;
+			R->bf = RH;
+			break;
+		case RH:
+			T->bf = LH;
+			R->bf = EH;
+			break;
+		case EH:
+			T->bf = R->bf = EH;
+			break;
+		default:
+			break;
+		}
+
+	default:
+		Rl->bf = EH;
+		R_Rotate(T->right);
+		L_Rotate(T);
+		break;
+	}
+}
+int buildMinimalBST(vector<int> vals) {
+	// write code here
+	AVLTrNode  * root = nullptr;
+	bool  taller ;
+	for (auto vi_elem : vals){
+		InsertAVL(root, vi_elem, taller);
+	}
+	int depth = Depth(root);
+	return depth;
+}
+bool InsertAVL(AVLTrNode * & root, int s,bool & taller)
+{
+	if (root == nullptr)
+	{
+		root = new AVLTrNode(s);
+		taller = true;
+	}
+	else{
+		if (s == root->val){
+			taller = false;
+			return false;
+		}
+		if (s < root->val){
+			if (!InsertAVL(root->left, s, taller))
+				return false;
+			if (taller){
+				switch (root->bf)
+				{
+				case LH:
+					LeftBalance(root);
+					taller = false;
+					break;
+				case EH:
+					root->bf = LH;
+					taller = true;
+					break;
+				case RH:
+					root->bf = EH;
+					taller = false;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		else{
+			if (!InsertAVL(root->right, s, taller)){
+				return false;
+			}
+			if (taller){
+				switch (root->bf)
+				{
+				case LH:
+					root->bf = EH;
+					taller = false;
+					break;
+				case EH:
+					root->bf = RH;
+					taller = true;
+					break;
+				case RH:
+					RightBalance(root);
+					taller = false;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	return true;
+}
+int Depth(AVLTrNode * root)
+{
+	if (root == nullptr)
+		return 0;
+	else{
+		int m = Depth(root->left);
+		int n = Depth(root->right);
+		return m > n ? m + 1 : n + 1;
+	}
+}
+void testbuildMinimalBST()
+{
+	vector<int> va = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	int depth = buildMinimalBST(va);
+	cout << "Depth:" << depth << endl;
+}
+/*路径检测，有向图顶点a,b是否是连通
+ */
+bool checkPath(UndirectedGraphNode* a, UndirectedGraphNode* b) {
+	// write code here
+	return check(a, b) || check(b, a);	
+}
+bool check(UndirectedGraphNode* a, UndirectedGraphNode* b)
+{
+	if (a == nullptr || b == nullptr)
+		return false;
+	if (a == b)
+		return true;
+	queue<UndirectedGraphNode * > pQueue;
+	pQueue.push(a);
+	map<UndirectedGraphNode *, bool> arrived_map;
+	while (!pQueue.empty()){
+		UndirectedGraphNode * front = pQueue.front();
+		arrived_map[front] = true;
+		for (unsigned i = 0; i < front->neighbors.size(); ++i){
+			if (front->neighbors[i] == b)
+				return true;
+			if (front->neighbors[i] && arrived_map[front->neighbors[i]] != true)
+				pQueue.push(front->neighbors[i]);
+		}
+		pQueue.pop();
+	}
+	return false;
+}
+void testcheckpath()
+{
+	int mmap[4] = { 0, 1, 2, 3 };
+	UndirectedGraphNode * pmap[4];
+	for (int i = 0; i < 4; ++i){
+		pmap[i] = new UndirectedGraphNode(i);
+	}
+	for (int i = 0; i < 3; ++i){
+		pmap[i]->neighbors.push_back(pmap[(i + 1) % 4]);
+	}
+	cout << "map[0] to map[3]" << checkPath(pmap[1], pmap[0]);
+}
+/*
+struct TreeNode {
+int val;
+struct TreeNode *left;
+struct TreeNode *right;
+TreeNode(int x) :
+val(x), left(NULL), right(NULL) {
+}
+};*/
+
+/*
+struct ListNode {
+int val;
+struct ListNode *next;
+ListNode(int x) : val(x), next(NULL) {}
+};*/
+
+ListNode* getTreeLevel(TreeNode* root, int dep) {
+	// write code here
+	if (root == nullptr)
+		return nullptr;
+	if (dep <= 0)
+		return nullptr;
+	queue<TreeNode *> t_Queue;
+	t_Queue.push(root);
+	int i = 1;
+	int branch = (int)pow(2, dep-1) - 1;
+	ListNode * list_dep = new ListNode(-1);
+	ListNode * p = list_dep;
+	while (!t_Queue.empty()){
+		TreeNode * tnp = t_Queue.front();
+		if (i <= branch){
+			//if (tnp->left != nullptr)
+				t_Queue.push(tnp->left);
+			//if (tnp->right != nullptr)
+				t_Queue.push(tnp->right);
+			++i;
+		}
+		else if (i == branch+1){
+			ListNode * q = new ListNode(tnp->val);
+			p->next = q;
+			p = q;
+		}
+		t_Queue.pop();
+	}
+	return list_dep->next;
+}
+void create(TreeNode * root, int i)
+{
+	if (i < 0 || i>63)
+		return;
+	TreeNode * lc = new TreeNode(2 * i);
+	TreeNode * rc = new TreeNode(2 * i + 1);
+	root->left = lc;
+	root->right = rc;
+	create(lc, 2 * i);
+	create(rc, 2 * i + 1);
+}
+void testgetTreeLevel()
+{
+	TreeNode * root = new TreeNode(1); 
+	create(root, 1);
+	ListNode * p = getTreeLevel(root, 6);
+	while (p){
+		cout << p->val << "->";
+		p = p->next;
+	}
+}
+bool checkBST(TreeNode* root) {
+	// write code here
+	if (nullptr != root){
+		TreeNode * p = root->left;
+		TreeNode * q = root->right;
+		return leftcheck(p, root) && rightcheck(q, root);
+	}
+	return true;
+}
+bool leftcheck(TreeNode * L, TreeNode * F)
+{
+	if (nullptr != L){
+		TreeNode * p = L->left;
+		TreeNode * q = L->right;
+		if (nullptr != p &&L->val < p->val)
+			return false;
+		else
+			return leftcheck(p, L);
+		if (nullptr != q && L->val > q->val && q->val > F->val)
+			return false;
+		else
+			return rightcheck(q, L);
+	}
+	return true;
+}
+bool rightcheck(TreeNode * R, TreeNode * F)
+{
+	if (nullptr != R){
+		TreeNode * p = R->left;
+		TreeNode * q = R->right;
+		if (nullptr != p && R->val > p->val && p->val < F->val)
+			return false;
+		else
+			return leftcheck(p, R);
+		if (nullptr != q && R->val < q->val)
+			return false;
+		else
+			return rightcheck(q, R);
+	}
+	return true;
+}
+TreeNode * searchBST(TreeNode * root, int key)
+{
+	if (root == nullptr)
+		return nullptr;
+	if (key = root->val)
+		return root;
+	else if (key < root->val)
+		return searchBST(root->left, key);
+	else
+		return searchBST(root->right, key);
+}
+void insertBST(TreeNode * & root, TreeNode * s)
+{
+	if (root == nullptr)
+		root = s;
+	else if (root->val > s->val)
+		insertBST( root->left, s);
+	else
+		insertBST( root->right, s);
+}
+void testcheckBST()
+{
+	int arr[10] = { 5, 6, 4, 3, 7, 2, 8, 1, 9, 0 };
+	TreeNode * root = nullptr;
+	for (int i = 0; i < 10; ++i){
+		TreeNode * p = new TreeNode(arr[i]);
+		insertBST(root, p);
+	}
+	cout << "CheckBST:" << checkBST(root) << endl;
+}
+/* 请设计一个算法，寻找二叉树中指定结点的下一个结点（即中序遍历的后继）。
+ * 给定树的根结点指针TreeNode* root和结点的值int p，请返回值为p的结点的后继结点的值。
+ * 保证结点的值大于等于零小于等于100000且没有重复值，若不存在后继返回-1。
+ */
+int findSucc(TreeNode* root, int p) {
+	// write code here
+	vector<int> vi;
+	InOrder(root, vi);
+	for (unsigned i = 0; i < vi.size(); ++i){
+		if (p == vi[i])
+			return vi[i + 1];
+	}
+	return -1;
+}
+void InOrder(TreeNode * R,vector<int> & vi)
+{
+	if (R == nullptr)
+		return;
+	else{
+		InOrder(R->left,vi);
+		cout << R->val << " ";
+		vi.push_back(R->val);
+		InOrder(R->right, vi);
+	}
+}
+void testfindSucc()
+{
+	int arr[10] = { 5, 6, 4, 3, 7, 2, 8, 1, 9, 0 };
+	TreeNode * root = nullptr;
+	for (int i = 0; i < 10; ++i){
+		TreeNode * p = new TreeNode(arr[i]);
+		insertBST(root, p);
+	}
+	cout<<findSucc(root, 5);
+}
+/* 有一棵无穷大的满二叉树，其结点按根结点一层一层地从左往右依次编号，根结点编号为1。
+ * 现在有两个结点a，b。请设计一个算法，求出a和b点的最近公共祖先的编号。给定两个int a,b。
+ * 为给定结点的编号。请返回a和b的最近公共祖先的编号。注意这里结点本身也可认为是其祖先。
+ * 测试样例：2，3  返回：1
+*/
+int getLCA(int a, int b) {
+	// write code here
+	if (a == b)
+		return a;
+	vector<int> fa;
+	vector<int> fb;
+	for (int i = a; i >= 1; i /= 2)
+		fa.push_back(i);
+	for (int i = b; i >= 1; i /= 2)
+		fb.push_back(i);
+	for (unsigned j = 0; j < fa.size(); ++j){
+		vector<int>::iterator it = find(fb.begin(), fb.end(), fa[j]);
+		if ( it != fb.end())
+			return fa[j];
+	}
+	return 1;
+}
+void testgetLCA()
+{
+	cout << "2 and 3 'father :" << getLCA(12, 13);
+}
+/* 输入一颗二叉树和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。
+ * 路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。
+ */
+vector<vector<int> > FindPath(TreeNode * root, int expectNumber) {
+	int sum = 0;
+	vector<int> Path;
+	vector<vector<int>> AllPath;
+	if (root != nullptr){
+		LeftPath(root, sum, expectNumber, Path, AllPath);
+		RightPath(root, sum, expectNumber, Path, AllPath);
+	}
+	return AllPath;
+}
+void LeftPath(TreeNode * L,int sum ,const int expectNumber,vector<int> path,vector<vector<int>> & Allpath)
+{
+	if (L == nullptr)
+		return;
+	sum += L->val;
+	if (sum > expectNumber)
+		return;
+	path.push_back(L->val);
+	TreeNode * lc = L->left;
+	TreeNode * rc = L->right;
+	if (lc == nullptr && rc == nullptr){
+		if (sum == expectNumber){
+			Allpath.push_back(path);
+		}
+	}
+	LeftPath(lc, sum, expectNumber, path, Allpath);
+	RightPath(rc, sum, expectNumber, path, Allpath);
+}
+void RightPath(TreeNode * R, int & sum, const int expectNumber, vector<int> & path, vector<vector<int>> & Allpath)
+{
+	if (R == nullptr)
+		return;
+	sum += R->val;
+	if (sum > expectNumber)
+		return;
+	path.push_back(R->val);
+	TreeNode * lc = R->left;
+	TreeNode * rc = R->right;
+	if (lc == nullptr && rc == nullptr){
+		if (sum == expectNumber){
+			Allpath.push_back(path);
+		}
+	}
+	LeftPath(lc, sum, expectNumber, path, Allpath);
+	RightPath(rc, sum, expectNumber, path, Allpath);
+}
+void testFindPath()
+{
+	int a[14] = { 0,1, 2, 3, 4, 5, 6, 7, 2, 1, 0, 1, 5, 0 };
+	TreeNode * root;
+	CreateTree(root, a, 1 , 13);
+	vector<vector<int>> vv_i = FindPath(root, 10);
+	cin.get();
+}
