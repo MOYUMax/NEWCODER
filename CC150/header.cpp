@@ -1285,56 +1285,280 @@ void testgetLCA()
  * 路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。
  */
 vector<vector<int> > FindPath(TreeNode * root, int expectNumber) {
-	int sum = 0;
 	vector<int> Path;
 	vector<vector<int>> AllPath;
 	if (root != nullptr){
-		LeftPath(root, sum, expectNumber, Path, AllPath);
-		RightPath(root, sum, expectNumber, Path, AllPath);
+		DFSFindPath(root, expectNumber, AllPath, Path);
 	}
 	return AllPath;
 }
-void LeftPath(TreeNode * L,int sum ,const int expectNumber,vector<int> path,vector<vector<int>> & Allpath)
+void DFSFindPath(TreeNode * root, int rest, vector<vector<int>> & path, vector<int> & ret)
 {
-	if (L == nullptr)
-		return;
-	sum += L->val;
-	if (sum > expectNumber)
-		return;
-	path.push_back(L->val);
-	TreeNode * lc = L->left;
-	TreeNode * rc = L->right;
-	if (lc == nullptr && rc == nullptr){
-		if (sum == expectNumber){
-			Allpath.push_back(path);
-		}
+	rest -= root->val;	//减去当前节点的值
+	ret.push_back(root->val);	//更新路径
+	//达到预期数值时，判断是否是叶子节点，如果是，则保存在 path中
+	if (rest == 0 && root->left == nullptr && root->right == nullptr){
+		path.push_back(ret);
 	}
-	LeftPath(lc, sum, expectNumber, path, Allpath);
-	RightPath(rc, sum, expectNumber, path, Allpath);
-}
-void RightPath(TreeNode * R, int & sum, const int expectNumber, vector<int> & path, vector<vector<int>> & Allpath)
-{
-	if (R == nullptr)
-		return;
-	sum += R->val;
-	if (sum > expectNumber)
-		return;
-	path.push_back(R->val);
-	TreeNode * lc = R->left;
-	TreeNode * rc = R->right;
-	if (lc == nullptr && rc == nullptr){
-		if (sum == expectNumber){
-			Allpath.push_back(path);
-		}
-	}
-	LeftPath(lc, sum, expectNumber, path, Allpath);
-	RightPath(rc, sum, expectNumber, path, Allpath);
+	if (rest != 0 && root->left != nullptr)
+		DFSFindPath(root->left, rest, path, ret);
+	if (rest != 0 && root->right != nullptr)
+		DFSFindPath(root->right, rest, path, ret);
+	ret.pop_back();//关键点，每次到达叶子后返回时逐一的删除原来的路径
 }
 void testFindPath()
 {
 	int a[14] = { 0,1, 2, 3, 4, 5, 6, 7, 2, 1, 0, 1, 5, 0 };
 	TreeNode * root;
 	CreateTree(root, a, 1 , 13);
-	vector<vector<int>> vv_i = FindPath(root, 10);
+	vector<vector<int>> vv_i = FindPath(root, 9);
 	cin.get();
+}
+/*题目描述
+ *有两个32位整数n和m，请编写算法将m的二进制数位插入到n的二进制的第j到第i位,
+ *其中二进制的位数从低位数到高位且以0开始。给定两个数int n和int m，同时给定int j和int i，
+ *意义如题所述，请返回操作后的数，保证n的第j到第i位均为零，且m的二进制位数小于等于i-j+1。
+ *测试样例：1024，19，2，6  返回：1100
+ *思路：相当于将 m 左移 j 位，然后加上 n 即可
+ */
+int binInsert(int n, int m, int j, int i) {
+	// write code here
+	//return (n + (m*pow(2, j)));
+	return (n + (m << j));
+}
+void testbinInsert()
+{
+	while (true){
+		cout << "请输入 n m j i:";
+		int n, m, j, i;
+		cin >> n >> m >> j >> i;
+		cout << " m 二进制插入 n 的结果：" << binInsert(n, m, j, i) << endl;
+	}
+}
+/*题目描述
+ *有一个介于0和1之间的实数，类型为double，返回它的二进制表示。
+ *如果该数字无法精确地用32位以内的二进制表示，返回“Error”。
+ *给定一个double num，表示0到1的实数，请返回一个string，代表该数的二进制表示或者“Error”。
+ *测试样例：0.625   返回：0.101
+ *思路：乘 2 取整数部分，重复直到小数部分为 0，当超过32次仍有小数，则返回 Error。
+ */
+string printBin(double num) {
+	// write code here
+	string s = "0.";
+	double twice = num * 2.0;
+	int zenhlen = int(2 * num);
+	double fraction = twice - zenhlen;
+	int count = 32;
+	s.push_back( '0' + zenhlen );
+	while (fraction != 0 && --count > 0){
+		twice = fraction * 2.0;
+		zenhlen =int(2 * fraction);
+		fraction = twice - zenhlen;
+		s.push_back('0' + zenhlen);
+	}
+	if (fraction == 0)
+		return s;
+	else
+		return "Error";
+}
+void testprintBin()
+{
+	double num;
+	while (true){
+		cout << "请输入介于0 和 1之间的纯小数（double):";
+		cin >> num;
+		cout << "它的32位二进制:" << printBin(num) << endl;
+	}
+}
+/*题目描述
+ *有一个正整数，请找出其二进制表示中1的个数相同、且大小最接近的那两个数。(一个略大，一个略小)
+ *给定正整数int x，请返回一个vector，代表所求的两个数（小的在前）。保证答案存在。
+ *测试样例：2  返回：[1,4]
+ *思路：位操作法 http://blog.csdn.net/wangfengfan1/article/details/47957299
+ 
+ */
+vector<int> getCloseNumber(int x) {
+	// write code here
+	vector<int> ret;
+	int next = getNext(x);
+	int prev = getPrev(x);
+	
+	ret.push_back(prev);
+	ret.push_back(next);
+	return ret;
+}
+int getNext(int n)
+{
+	// p : 最右边但是不拖尾的 0 的位置（低位从 0 开始记）
+	//步骤 1 ：计算 c0, c1, p
+	int c = n;
+	int c0 = 0;// p 的右边 0 的个数
+	int c1 = 0;// p 的右边 1 的个数
+	while (((c & 1) == 0) && (c != 0)){
+		++c0;
+		c >>= 1;//
+	}
+	while ((c & 1) == 1)
+	{
+		++c1;
+		c >>= 1;
+	}
+	//错误：若 x == 11..1100..00,那么没有比它更大的数字
+	if (c0 + c1 == 31 || c0 + c1 == 0){
+		return -1;
+	}
+	//步骤 2  ： 将 n 的第 p 位置 1， p 右边的全部清零，
+	int p = c0 + c1;	//p : 最右边但是不拖尾的 0 的位置（低位从 0 开始记）
+	n |= (1 << p);	//翻转第 p 位上的 0 成为 1
+	int a = 1 << p;	// a : p 位为 1，其余位为 0 
+	int b = a - 1;	// b : 前面全为 0， 后面跟 p 个 1
+	int mask = ~b;	// 掩码 mask : 前面全为 1 ，后面跟 p 个 0
+	n = n& mask;	// 将 n 右边 p 位清零
+	//步骤 3 ：将 n 右边的 p 位回填最大的 （c1 - 1） 个 1
+	a = 1 << (c1 - 1);// a : 位（c1 - 1)为 1，其余位均为 0
+	b = a - 1;	//位 0 到位（c1 - 1)均为 1，其余位为 0
+	n = n | b;	//在位 0 到位（c1 - 1)插入1
+	return n;
+}
+int getPrev(int n)
+{
+	// p : 最右边但是不拖尾的 1 的位置（低位从 0 开始记）
+	//步骤 1 ：计算 c1, c0, p ( 与getNext中的定义有区别）
+	int temp = n;
+	int c0 = 0;
+	int c1 = 0;
+	//计算
+	while ((temp & 1) == 1){
+		++c1;
+		temp >>= 1;
+	}
+	//错误，形如 00..0011..11的数，没有比他更小的（1个数相同）的数
+	if (temp == 0)
+		return -1;
+	while (((temp & 1) == 0) && (temp != 0)){
+		++c0;
+		temp >>= 1;
+	}
+	//步骤 2、3 ：将位 0 到位 p 清零
+	int p = c0 + c1;//p : 最右边但是不拖尾的 1 的位置（低位从 0 开始记）
+	int a = ~0; //全1
+	int b = a << (p + 1); //位 p 左方全为 1，后跟 p+1 个0
+	n &= b;	//将 n 位 0 到位 p 清零
+	//步骤 4 ：将 n 位 p 的右方，插入最大 c1 + 1 个1
+	//注意：p = c0 + c1,因此（c1 + 1) 个1 的后面会跟（c0 - 1)个 0
+	a = 1 << (c1 + 1); //a : 位（c1 + 1) 为1，其余位均为0
+	b = a - 1;			//b : 前面为 0 ，后面跟 （c1 + 1） 个1
+	int c = b << (c0 - 1);//c : (c1 + 1)个1，后面跟 (c0 - 1)个0
+	n |= c;		// 把 n 的后面替换为 c, 相当于 n = n + c ;
+	return  n;
+}
+void testgetCloseNumber()
+{
+	int x;
+	vector<int> closeNum;
+	while (true){
+		cout << "请输入一个正整数：";
+		cin >> x;
+		closeNum = getCloseNumber(x);
+		cout << "最接近 " << x << "的两个数：";
+		for (auto vi_elem : closeNum){
+			cout << vi_elem << " ";
+		}
+		cout << endl;
+	}
+}
+/*题目描述
+编写一个函数，确定需要改变几个位，才能将整数A转变成整数B。
+给定两个整数int A，int B。请返回需要改变的数位个数。
+测试样例：10,5  返回：4
+思路：从低位求两个数的二进制值，对比该位二进制是否相同；一个数完成后，查看另一个数剩下的位为 1 的个数
+ */
+int calcCost(int A, int B) {
+	// write code here
+	int a = A;
+	int b = B;
+	int count = 0;
+	while (a != 0 && b != 0){
+		int bitA = a % 2;
+		int bitB = b % 2;
+		if (bitA != bitB)
+			++count;
+		a /= 2;
+		b /= 2;
+	}
+	while (a != 0){
+		if (a % 2 == 1)
+			++count;
+		a /= 2;
+	}
+	while (b != 0){
+		if (b % 2 == 1)
+			++count;
+		b /= 2;
+	}
+	return count;
+}
+void testcalcCost()
+{
+	while (true){
+		int A, B;
+		cout << "请输入整数 A B：";
+		cin >> A >> B;
+		cout << "需要改变的数位个数：" << calcCost(A, B) << endl;
+	}
+}
+/*题目描述
+请编写程序交换一个数的二进制的奇数位和偶数位。（使用越少的指令越好）
+给定一个int x，请返回交换后的数int。
+测试样例： 10   返回：5
+思路：  设待操作的数为N，用N&0xaaaaaaaa（也就是10101010....）取出偶数位，
+		用N&0x55555555（也就是01010101...）取出奇数位。
+		第二步：偶数位应该右移一位，奇数位则应该左移一位。
+		第三步：采用与操作把它们拼起来。
+ */
+int exchangeOddEven(int x) {
+	// write code here
+	return (((x)& 0xaaaaaaaa) >> 1) | (((x)& 0x55555555) << 1);
+}
+void testexchangeOddEven()
+{
+	while (true){
+		int x;
+		cout << "请输入整数：";
+		cin >> x;
+		cout << "交换它的二进制奇数位和偶数位后：" << exchangeOddEven(x) << endl;
+	}
+}
+int findMissing(vector<vector<int> > numbers, int n) {
+	// write code here
+	if (numbers[0][0] != 0)
+		return 0;
+	for (int i = 0; i < n - 1; ++i){
+		if (numbers[i + 1][0] != (numbers[i][0] + 1) % 2)
+			return i + 1;
+	}
+	return n;
+}
+void testfindMissing()
+{
+	vector<vector<int>> numbers = { { 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 0, 0, 1 } };
+	cout << "缺失的数是：" << findMissing(numbers, 5) << endl;
+}
+/*题目描述
+有一个单色屏幕储存在一维数组中，其中数组的每个元素代表连续的8位的像素的值，
+请实现一个函数，将第x到第y个像素涂上颜色(像素标号从零开始)，并尝试尽量使用最快的办法。
+给定表示屏幕的数组screen(数组中的每个元素代表连续的8个像素，且从左至右的像素分别对应元素的二进制
+的从低到高位)，以及int x,int y，意义如题意所述，保证输入数据合法。请返回涂色后的新的屏幕数组。
+测试样例：[0,0,0,0,0,0],0,47          返回：[255,255,255,255,255,255]
+思路：基本上大意就是从第x 到第y位 ，其中的像素全部变为1，如此两种情况 ：
+        0-->1, 1-->1 ，所以这时候就很清楚的用 位操作中的 ' | '
+ */
+vector<int> renderPixel(vector<int> screen, int x, int y) {
+	// write code here
+	for (int i = x; i <= y; ++i){
+		int k = i % 8;//列
+		int t = i / 8;//行
+		screen[t]  |= (1 << k);// 置第t行位k为1，
+	}
+	return screen;
 }

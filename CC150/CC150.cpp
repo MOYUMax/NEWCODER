@@ -31,7 +31,13 @@ int _tmain(int argc, _TCHAR* argv[])
 //	testcheckBST();			//4.5
 //	testfindSucc();			//4.6
 //	testgetLCA();			//4.7
-	testFindPath();			//4.8
+//	testFindPath();			//4.8
+//	testbinInsert();		//5.1
+//	testprintBin();			//5.2
+//	testgetCloseNumber();	//5.3
+//	testcalcCost();			//5.5
+//	testexchangeOddEven();	//5.6
+	testfindMissing();		//5.7
 	system("PAUSE");
 	return 0;
 }
