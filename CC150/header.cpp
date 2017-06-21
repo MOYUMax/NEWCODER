@@ -1562,3 +1562,97 @@ vector<int> renderPixel(vector<int> screen, int x, int y) {
 	}
 	return screen;
 }
+/*题目描述
+在二维平面上，有一些点，请找出经过点数最多的那条线。
+给定一个点集vector<point>p和点集的大小n,没有两个点的横坐标相等的情况,
+请返回一个vector<double>，代表经过点数最多的那条直线的斜率和截距。</double></point>
+思路：统计任意两点构成的直线的个数，返回相同点最大的那条直线。
+*/
+class DenseLine {
+public:
+	vector<double> getLine(vector<Point> p, int n) {
+		// write code here
+		double max = 0, slope = DBL_MAX, intercept = 0;
+		map<pair<double, double>, int> map_line;
+
+		for (int i = 0; i < n; ++i){
+			for (int j = i + 1; j < n; ++j){
+				double k = (p[i].y - p[j].y) / (p[i].x - p[j].x);
+				double b = p[j].y - k*p[j].x;
+				pair<map<pair<double, double>, int>::iterator, bool> ret = map_line.insert(make_pair(make_pair(k, b), 1));
+				if (ret.second == false){
+					//插入失败，代表 map_line 中已经存在这条直线了，需要增加该直线的计数
+					++(ret.first->second);
+					if (max < ret.first->second){
+						//更新穿点最多的直线
+						slope = ret.first->first.first;
+						intercept = ret.first->first.second;
+						int count = ret.first->second;
+						cout << "穿点更大直线：count = "<<count<<"\t斜率和截距：" << slope << "\t" << intercept << endl;
+					}
+				}				
+			}
+		}
+		vector<double> result = { slope, intercept };
+		return result;
+	}
+};
+void testgetLine()
+{
+	vector<Point> vp = {
+		Point(0, 0), Point(1, 1), Point(2, 0), Point(3, 3)
+	};
+	DenseLine dsl;
+	//vector<double> ret = DenseLine::getLine(vp, vp.capacity());
+	vector<double> ret = dsl.getLine(vp, vp.capacity());
+	cout << "穿点最多的直线：" << ret.at(0) << "\t" << ret.at(1) << endl;
+}
+/*题目描述
+有一些数的素因子只有3、5、7，请设计一个算法，找出其中的第k个数。
+给定一个数int k，请返回第k个数。保证k小于等于100。
+测试样例： 3    返回：7
+思路：
+	3个素数因子3、5、7分为三个队列q3,q5,q7，其中最初存放3，5，7。 之后每次添加找到三个队列头中最小的数，
+	起初为3，将3移出队列q3后，	在q3添加3*3，在q5添加3*5,q7中添加3*7。 此时可知q3{3*3},q5{5,3*5},q7{7,3*7}
+????下一轮找到最小数为5，重复上述步骤，将5从q5移出，添加5*5到q5，因为5*3已经添加过所以不需要添加到q3中
+	将5*7添加到q7，结果q3{3*3},q5{3*5,5*5},q7{7,3*7,5*7} 依次找到第k个数
+*/
+int findKth(int k) {
+	// write code here
+	if (k <= 0)
+		return 0;
+	int result = 0;
+	queue<int> q3, q5, q7;
+	q3.push(3);
+	q5.push(5);
+	q7.push(7);
+	for (int i = 1; i <= k; ++i){
+		int v3 = q3.size() > 0 ? q3.front() : INT_MAX;
+		int v5 = q5.size() > 0 ? q5.front() : INT_MAX;
+		int v7 = q7.size() > 0 ? q7.front() : INT_MAX;		
+		result = min({ v3, v5, v7 });
+		if (result == v3){
+			q3.pop();
+			q3.push(result * 3);
+			q5.push(result * 5);			
+		}
+		else if (result == v5){
+			q5.pop();
+			q5.push(result * 5);		
+		}
+		else{
+			q7.pop();			
+		}
+		q7.push(result * 7);
+	}
+	return result;
+}
+void testfindKth()
+{
+	int k = 0;
+	while (true){
+		cout << "请输入 K ：";
+		cin >> k;
+		cout << "第 K 个满足素因子3、5、7的数：" << findKth(k) << endl;
+	}
+}

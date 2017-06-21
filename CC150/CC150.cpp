@@ -37,7 +37,9 @@ int _tmain(int argc, _TCHAR* argv[])
 //	testgetCloseNumber();	//5.3
 //	testcalcCost();			//5.5
 //	testexchangeOddEven();	//5.6
-	testfindMissing();		//5.7
+//	testfindMissing();		//5.7
+//	testgetLine();			//7.6
+	testfindKth();			//7.7
 	system("PAUSE");
 	return 0;
 }
