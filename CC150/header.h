@@ -11,6 +11,8 @@
 #include <queue>
 #include <map>
 #include <cmath>
+#include <array>
+#include <set>
 
 using namespace std;
 
@@ -142,4 +144,57 @@ struct Point {
 void testgetLine();
 int findKth(int k);
 void testfindKth();
+int countWays(int n);
+void testcountWays();
+
+int countWays(int x, int y);
+void testcountWays2();
+int countWays(vector<vector<int> > map, int x, int y);
+void testcountWays3();
+bool findMagicIndex(vector<int> A, int n);
+void testfindMagicIndex();
+bool MagicNumber(vector<int> A, int start, int end);
+bool findMagicIndexII(vector<int> A, int n);
+vector<vector<int> > getSubsets(vector<int> A, int n);
+void testgetSubsets();
+vector<string> getPermutation(string A);
+void Permutation(vector<string> & vs, string A, int start, int end);
+void testgetPermutation();
+bool chkParenthesis(string A, int n);
+void testchkParenthesis();
+int countWaysC(int n);
+void testcountWays4();
+bool check_place(int row, int col, vector<int> & m, int n);
+void print_result(const vector<int> & m, const int count, const int n);
+void queen(const int n, int row, vector<int> & m, int & count);
+int nQueens(int n);
+void testnQueens();
+int getHeight(vector<int> w, vector<int> l, vector<int> h, int n);
+void testgetHeight();
+
+struct JosephNode{
+	int jsp;
+	JosephNode * next;
+	JosephNode(int j) :jsp(j), next(nullptr){}
+};
+int getResult(int n, int m);
+void testJoseph();
+int getResult(int n);
+void testJosephUP();
+vector<string> sortStrings(vector<string> str, int n);
+void testsortStrings();
+int findElement(vector<int> A, int n, int x);
+void testfindElement();
+int findString(vector<string> str, int n, string x);
+void testfindString();
+vector<int> findElement(vector<vector<int> > mat, int n, int m, int x);
+void testfindElementMat();
+int getHeight(vector<int> men, int n);
+void testgetHeightV2();
+int getHeight(vector<vector<int> > actors, int n);
+void testgetHeightVII();
+vector<int> getRankOfNumber(vector<int> A, int n);
+void testgetRankOfNumber();
+int count(vector<int> A, int n);
+void testcount();
 #endif

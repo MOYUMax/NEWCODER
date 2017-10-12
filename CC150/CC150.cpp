@@ -39,7 +39,27 @@ int _tmain(int argc, _TCHAR* argv[])
 //	testexchangeOddEven();	//5.6
 //	testfindMissing();		//5.7
 //	testgetLine();			//7.6
-	testfindKth();			//7.7
+//	testfindKth();			//7.7
+//	testcountWays();		//9.1
+//	testcountWays2();		//9.2
+//	testcountWays3();		//9.3
+//	testfindMagicIndex();	//9.4
+//	testgetSubsets();		//9.5
+//	testgetPermutation();	//9.6
+//	testchkParenthesis();	//9.7
+//	testcountWays4();		//9.8
+//	testnQueens();			//9.9
+//	testgetHeight();		//9.10
+//	testJoseph();			//9.11
+//	testJosephUP();			//9.12
+//	testsortStrings();		//11.2
+//	testfindElement();		//
+//	testfindString();		//11.5
+//	testfindElementMat();	//11.6
+//	testgetHeightV2();		//11.7-1
+//	testgetHeightVII();		//11.7-2
+//	testgetRankOfNumber();	//11.8
+	testcount();			//
 	system("PAUSE");
 	return 0;
 }
