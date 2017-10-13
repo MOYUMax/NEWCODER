@@ -59,7 +59,7 @@ int _tmain(int argc, _TCHAR* argv[])
 //	testgetHeightV2();		//11.7-1
 //	testgetHeightVII();		//11.7-2
 //	testgetRankOfNumber();	//11.8
-	testcount();			//
+	testcount();			//20171013
 	system("PAUSE");
 	return 0;
 }
