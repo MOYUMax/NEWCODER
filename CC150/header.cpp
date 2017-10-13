@@ -2761,7 +2761,7 @@ void testgetRankOfNumber()
 	vector<int> A = { 8, 1, 9, 4, 5, 6, 7 };
 //	vector<int> result = getRankOfNumber(A, A.size());
 	vector<int> result = getRankOfNumberV2(A, A.size());
-	for (int i = 0; i < result.size(); ++i){
+	for (size_t i = 0; i < result.size(); ++i){
 		cout << result[i] << " ";
 	}
 	return;
@@ -2785,12 +2785,237 @@ int count(vector<int> A, int n) {
 int countV2(vector<int> A, int n)
 {
 	int result = 0;
+	multiset<int> mset;
+	multiset<int>::iterator iter,cur;
 
+	for (int i = 0; i < n; ++i){
+		mset.insert(A[i]);
+		//iter = lower_bound(mset.begin(), mset.end(), A[i]);
+		iter = mset.upper_bound(A[i]);
+		int len = 0;
+		cur = mset.begin();
+		while (cur != iter){
+			++cur;
+			++len;
+		}
+		int revers_pair = mset.size() - len;
+		result += revers_pair;
+	}
 	return result;
 }
+
 void testcount()
 {
 	vector<int> a = { 1, 2, 3, 4, 5, 6, 7, 0 };
-	int result = count(a, a.size());
+	//int result = count(a, a.size());
+	int result = countV2(a, a.size());
 	cout << "The result is :" << result << endl;
+}
+/*题目描述
+请编写一个函数，函数内不使用任何临时变量，直接交换两个数的值。
+给定一个int数组AB，其第零个元素和第一个元素为待交换的值，请返回交换后的数组。
+测试样例：[1,2]  返回：[2,1]
+思路：采用加减法，乘除法，按位异或法都可以，但是前两种可能存在溢出，
+	首推按位异或
+*/
+vector<int> exchangeAB(vector<int> AB) {
+	// write code here
+	//AB[0] = AB[0] + AB[0] + AB[1];
+	//AB[1] = (AB[0] - AB[1]);
+	//AB[0] = AB[0] - AB[1];
+	//AB[1] /= 2;
+	AB[0] = AB[0] + AB[1];
+	AB[1] = AB[0] - AB[1];
+	AB[0] = AB[0] - AB[1];
+	return AB;
+}
+/*
+如果采用位运算来交换两个元素，则最可能使用的是位异或运算。
+如果是位与，一个数的0就会覆盖掉另一个数的0或者1，信息丢失。
+如果是位或，一个数的1就会覆盖掉另一个数的0或者1.
+而采用位异或，1表明两个位置不同，0表示相同。*/
+vector<int> exchangeABII(vector<int> AB) {
+	// write code here
+	AB[0] = AB[0] ^ AB[1];
+	AB[1] = AB[0] ^ AB[1];
+	AB[0] = AB[0] ^ AB[1];
+
+	return AB;
+}
+void testexchangeAB()
+{
+	vector<int> a = { 1, 2 };
+	vector<int> result = exchangeAB(a);
+	//vector<int> result = exchangeABII(a);
+	for (size_t i = 0; i < result.size(); ++i)
+		cout << result.at(i)<<" ";
+	return;
+}
+/*题目描述
+对于一个给定的井字棋棋盘，请设计一个高效算法判断当前玩家是否获胜。
+给定一个二维数组board，代表当前棋盘，其中元素为1的代表是当前玩家的棋子，为0表示没有棋子，为-1代表是对方玩家的棋子。
+测试样例：[[1,0,1],[1,-1,-1],[1,-1,0]]返回：true
+思路：数组是否存在任意相连的3个1
+*/
+bool checkWon(vector<vector<int> > board) {
+	// write code here
+	for (int i = 0; i < 3; ++i){
+		if ((board[i][0] + board[i][1] + board[i][2]) == 3)
+			return true;
+		if ((board[0][i] + board[1][i] + board[2][i]) == 3)
+			return true;
+	}
+	if ((board[0][0] + board[1][1] + board[2][2]) == 3)
+		return true;
+	if ((board[0][2] + board[1][1] + board[2][0]) == 3)
+		return true;
+	return false;
+}
+
+void testcheckWon()
+{
+	vector<vector<int>> jing = {
+		{ 1, 0, 1 },
+		{ 1, -1, -1 },
+		{ 1, -1, 0 }
+	};
+	bool result = checkWon(jing);
+	cout << "The checkWon:" << result << endl;
+}
+/*题目描述
+请编写一个方法，找出两个数字中最大的那个。条件是不得使用if-else等比较和判断运算符。
+给定两个int a和b，请返回较大的一个数。若两数相同则返回任意一个。
+测试样例：1，2  返回：2
+思路：  # (a - b) >> 31 为 0， 说明 a - b 最高位为0，即a >=b
+        # (a - b) >> 31 为 -1, 说明 a - b 最高位为1， 即 a < b
+*/
+int getMax(int a, int b) {
+	// write code here
+	//return max(a, b);
+	b = a - b;
+	a -= b&(b >> 31);
+	return a;
+}
+void testgetMax()
+{
+	int a = 1, b = 2;
+	int result = getMax(a, b);
+	cout << "The getMax:" << result << endl;
+}
+/*题目描述
+我们现在有四个槽，每个槽放一个球，颜色可能是红色(R)、黄色(Y)、绿色(G)或蓝色(B)。例如，可能的情况为RGGB(槽1为红色，槽2、3为绿色，槽4为蓝色)，
+作为玩家，你需要试图猜出颜色的组合。比如，你可能猜YRGB。要是你猜对了某个槽的颜色，则算一次“猜中”。要是只是猜对了颜色但槽位猜错了，则算一次“伪猜中”。注意，“猜中”不能算入“伪猜中”。
+给定两个string A和guess。分别表示颜色组合，和一个猜测。请返回一个int数组，第一个元素为猜中的次数，第二个元素为伪猜中的次数。
+测试样例："RGBY","GGRR"   返回：[1,1]
+思路：按照槽位统计，先删除猜中的，剩下的就是伪猜中和未中的。
+*/
+vector<int> calcResult(string A, string guess) {
+	// write code here
+	vector<int> result(2,0);
+	int rygb[2][4] = { 0 };
+	int cz = 0, wcz = 0;
+	for (int i = 0; i < 4; ++i){
+		if (A[i] == guess[i])
+			++cz;
+		switch (A[i])
+		{
+		case 'R':
+			++rygb[0][0];
+			break;
+		case 'Y':
+			++rygb[0][1];
+			break;
+		case 'G':
+			++rygb[0][2];
+			break;
+		case 'B':
+			++rygb[0][3];
+			break;
+		default:
+			break;
+		}
+		switch (guess[i])
+		{
+		case 'R':
+			++rygb[1][0];
+			break;
+		case 'Y':
+			++rygb[1][1];
+			break;
+		case 'G':
+			++rygb[1][2];
+			break;
+		case 'B':
+			++rygb[1][3];
+			break;
+		default:
+			break;
+		}
+	}
+	for (int i = 0; i < 4; ++i){
+		wcz += min(rygb[0][i], rygb[1][i]);
+	}
+	wcz -= cz;
+	result[0] = cz;
+	result[1] = wcz;
+	return result;
+}
+
+void testcalcResult()
+{
+	string A= "RGBY";
+	string Guss = "GGRR";
+	vector<int> result = calcResult(A, Guss);
+	cout << "The Right Guss is:" << result[0] << " and the Fake Guss is:" << result[1] << endl;
+}
+/*题目描述
+请设计一个算法，计算n的阶乘有多少个尾随零。
+给定一个int n，请返回n的阶乘的尾零个数。保证n为正整数。
+测试样例：5   返回：1
+思路：
+*/
+int getFactorSuffixZero(int n) {
+	// write code here
+	long fac = 1;
+	for (int i = 2; i <= n; ++i)
+		fac *= i;
+	int result = 0;
+	while (fac % 10 == 0){
+		fac /= 10;
+		++result;
+	}
+	return result;
+}
+/*
+ * 思路：刚开始做这道题的时候，我是先求出n！再计算有多少个0
+  * 这样的复杂度很大，编译不通过，后来在编程之美中看到了思路，思路如下
+   *   n!可以质因数分解，由于2*5=10，所以尾零的个数只与2和5有关
+    *   但是能被2整除的频率比被5整除的数高的多，所以尾零的个数其实只和5相关，
+	 *   n！能被多少个5解，就有多少个0，
+	  *   这事，通过遍历（1到n)只要将能被5整除，就统计+1，最后统计的数，就是尾零的个数
+	   *
+	    */
+int getFactorSuffixZeroV2(int n)
+{
+	int result = 0;
+	for (int i = 1; i <= n; ++i){
+		int j = i;
+		while (j % 5 == 0){
+			++result;
+			j /= 5;
+		}
+	}
+	return result;
+}
+void testgetFact()
+{
+	int n, result;
+	
+	do{
+		cout << "Please input a num (<0queit):";
+		cin >> n;
+		//result = getFactorSuffixZero(n);
+		result = getFactorSuffixZeroV2(n);
+		cout << "The 0 tail is:" << result << endl;
+	} while (n > 0);
 }

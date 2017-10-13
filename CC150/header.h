@@ -197,4 +197,14 @@ vector<int> getRankOfNumber(vector<int> A, int n);
 void testgetRankOfNumber();
 int count(vector<int> A, int n);
 void testcount();
+vector<int> exchangeAB(vector<int> AB);
+void testexchangeAB();
+bool checkWon(vector<vector<int> > board);
+void testcheckWon();
+int getMax(int a, int b);
+void testgetMax();
+vector<int> calcResult(string A, string guess);
+void testcalcResult();
+int getFactorSuffixZero(int n);
+void testgetFact();
 #endif
